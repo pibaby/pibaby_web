@@ -1,6 +1,7 @@
 <script>
   import { Calendar } from '@fullcalendar/core';
   import dayGridPlugin from '@fullcalendar/daygrid';
+  import timeGridPlugin from '@fullcalendar/timegrid';
   import { afterUpdate } from 'svelte';
 
   export let events = [
@@ -20,8 +21,9 @@
       var calendarEl = document.getElementById('calendar');
 
       var calendar = new Calendar(calendarEl, {
-          plugins: [ dayGridPlugin ],
+          plugins: [ dayGridPlugin, timeGridPlugin ],
           initialDate: new Date(), // today
+          initialView: 'timeGridWeek',
           events: events
         });
 
