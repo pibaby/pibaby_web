@@ -65,7 +65,7 @@
 						sleep_3.push(new Date(s[2]) -  new Date(s[1]))
 				}
 				place_holder.push({
-						title: `sleep ${timeConversion(s[3] * 1000)}`,
+						title: `Sleep ${timeConversion(s[3] * 1000)}`,
 						start: s[1],
 						end: s[2]
 				})
@@ -81,7 +81,7 @@
 				if(p[1] > last_30) poops_count_30++;
 				if(p[1] > last_3) poops_count_3++;
 				place_holder.push({
-						title: "poop",
+						title: "Poop",
 						start: p[1]
 				})
 			})
@@ -90,7 +90,7 @@
 				if(w[1] > last_30) wet_diapers_count_30++;
 				if(w[1] > last_3) wet_diapers_count_3++;
 				place_holder.push({
-						title: "wet diaper",
+						title: "Wet",
 						start: w[1],
 				})
 			})
