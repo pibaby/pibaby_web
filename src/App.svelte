@@ -1,10 +1,7 @@
 <script>
 	import Calendar from './Calendar.svelte'
 	import StatCard from './StatCard.svelte'
-	let sleep = []
-	let poops = []
-	let wet_diapers = []
-	let current_view = 7
+	$: current_view = 7
 	let poops_count_7 = 0
 	let wet_diapers_count_7 = 0
 	let poops_count_30 = 0
@@ -55,20 +52,31 @@
 			let sleep_7  = []
 			let sleep_30 = []
 			json.sleep.forEach(s => {
+					let diff = new Date(s[2]) -  new Date(s[1])
 				if(s[1] > last_30 ||  s[2] > last_30){
-						sleep_30.push(new Date(s[2]) -  new Date(s[1]))
+						sleep_30.push(diff)
 				}
 				if(s[1] > last_7 ||  s[2] > last_7){
-						sleep_7.push(new Date(s[2]) -  new Date(s[1]))
+						sleep_7.push(diff)
 				}
 				if(s[1] > last_3 ||  s[2] > last_3){
-						sleep_3.push(new Date(s[2]) -  new Date(s[1]))
+						sleep_3.push(diff)
 				}
-				place_holder.push({
-						title: `Sleep ${timeConversion(s[3] * 1000)}`,
-						start: s[1],
-						end: s[2]
-				})
+
+				if(diff > 1800000){
+					place_holder.push({
+							title: `Sleep ${timeConversion(s[3] * 1000)}`,
+							start: s[1],
+							end: s[2],
+							color: "#687ccc"
+					})
+				}else{
+					place_holder.push({
+							title: `Sleep ${timeConversion(s[3] * 1000)}`,
+							start: s[1],
+							color: "#687ccc"
+					})
+				}
 			})
 			sleep_3_total = sleep_3.reduce((a, b) => a + b, 0)
 			sleep_7_total = sleep_7.reduce((a, b) => a + b, 0)
@@ -82,7 +90,8 @@
 				if(p[1] > last_3) poops_count_3++;
 				place_holder.push({
 						title: "Poop",
-						start: p[1]
+						start: p[1],
+						color: "#fcaec0"
 				})
 			})
 			json.wet_diaper.forEach(w => {
@@ -92,6 +101,7 @@
 				place_holder.push({
 						title: "Wet",
 						start: w[1],
+						color: "#ffbf1c"
 				})
 			})
 			cal_events = place_holder
@@ -175,9 +185,8 @@
 	<StatCard days={current_view} 
 						poops={current_poops} wet_diaper={current_wet}
 						sleep={current_sleep}/>
-	<h2>Calendar</h2>
 	<div class="card">
-		<Calendar events={cal_events}/>
+		<Calendar view={current_view} events={cal_events}/>
 	</div>
 </main>
 

@@ -24,7 +24,7 @@
 
 </script>
 	<div class="rows">
-		<div class="stat-card blue">
+		<div class="stat-card orange">
 			<p>Wet Diapers {days} Days:  </p>
 			<h1>{wet_diaper}</h1>
 		</div>
@@ -32,7 +32,7 @@
 			<p>Poops {days} Days:  </p>
 			<h1>{poops}</h1>
 		</div>
-		<div class="stat-card orange">
+		<div class="stat-card blue">
 			<p>Sleep {days} Days: </p>
 			<h1>{timeConversion(sleep)}</h1>
 		</div>
