@@ -9,31 +9,28 @@
 		var seconds = (millisec / 1000).toFixed(1);
 		var minutes = (millisec / (1000 * 60)).toFixed(1);
 		var hours = (millisec / (1000 * 60 * 60)).toFixed(1);
-		var days = (millisec / (1000 * 60 * 60 * 24)).toFixed(1);
 		if (seconds < 60) {
 				return seconds + " Sec";
 		} else if (minutes < 60) {
 				return minutes + " Min";
-		} else if (hours < 24) {
-				return hours + " Hrs";
 		} else {
-				return days + " Days"
-		}
+				return hours + " Hrs";
+		} 
 	}
 
 
 </script>
 	<div class="rows">
 		<div class="stat-card orange">
-			<p>Wet Diapers {days} Days:  </p>
+			<p>Wet Diapers Last {days} Days:  </p>
 			<h1>{wet_diaper}</h1>
 		</div>
 		<div class="stat-card red">
-			<p>Poops {days} Days:  </p>
+			<p>Poops Last {days} Days:  </p>
 			<h1>{poops}</h1>
 		</div>
 		<div class="stat-card blue">
-			<p>Sleep {days} Days: </p>
+			<p>Sleep Last {days} Days: </p>
 			<h1>{timeConversion(sleep)}</h1>
 		</div>
 	</div>

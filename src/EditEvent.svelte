@@ -1,5 +1,6 @@
 <script>
   import { getContext } from 'svelte';
+	import store from './store.js'
   export let info;
 	export let onCancel = () => {};
 	export let onOkay = () => {};
@@ -24,6 +25,10 @@
 		let id = info.extendedProps.data.id
 		let table = info.extendedProps.data.table
 		console.debug("sendDelete", id, table)
+		store.sendMessage(JSON.stringify({action:"delete", data:{id: id, table: table}}))
+		store.sendMessage(JSON.stringify({
+				action:"init"
+		}))
 		close()
 	}
 
@@ -40,7 +45,16 @@
 					update[x] = update[x].value
 				}
 		})
+		update.table = info.extendedProps.data.table
+		update.id = info.extendedProps.data.id
 		console.debug("sendUpdate", update)
+			store.sendMessage(JSON.stringify({
+					action:"update",
+					data:update
+				}))
+			store.sendMessage(JSON.stringify({
+					action:"init"
+			}))
 		close()
 	}
 	

@@ -2,6 +2,8 @@
 	import Calendar from './Calendar.svelte'
 	import StatCard from './StatCard.svelte'
 	import Modal from './Modal.svelte';
+	import store from './store.js';
+	import { onMount } from 'svelte';
 	$: current_view = 3
 	let poops_count_7 = 0
 	let wet_diapers_count_7 = 0
@@ -17,24 +19,32 @@
 	let sleep_7_total = 0
 	let sleep_30_total = 0
 	
-	let ws = new WebSocket('ws://localhost:8765');
-	ws.onopen = function() {
-			console.debug("connected to pi_baby server");
-			ws.send(JSON.stringify({action:"init"}))
-	};
-	ws.onmessage = (evt)  => {
-		var received_msg = evt.data;
+	onMount(() => {
+		store.subscribe(received_msg => {
 		let json = JSON.parse(received_msg)
-		console.debug(json)
 			if(json.action != null){
 				actionHandler(json)
 			}else{
 				console.error("Message from server did not have an action")
 			}
-	}
+		})
+	})
 
 
 	const initHandler = (json) => {
+			console.debug(json)
+			poops_count_3 = 0	
+			poops_count_7 = 0	
+			poops_count_30 = 0	
+			sleep_3_total = 0	
+			sleep_7_total = 0	
+			sleep_30_total = 0	
+			wet_diapers_count_3 = 0	
+			wet_diapers_count_7 = 0	
+			wet_diapers_count_30 = 0	
+			console.log(current_sleep, current_wet, current_poops)
+
+			let now = new Date().toISOString()
 			let last_7 = new Date()
 			last_7.setDate(last_7.getDate()  -  7)
 			last_7 = last_7.toISOString()
@@ -52,13 +62,13 @@
 			let sleep_30 = []
 			json.sleep.forEach(s => {
 					let diff = new Date(s[2]) -  new Date(s[1])
-				if(s[1] > last_30 ||  s[2] > last_30){
+				if(s[1] > last_30 ||  s[2] > last_30 && s[1] < now){
 						sleep_30.push(diff)
 				}
-				if(s[1] > last_7 ||  s[2] > last_7){
+				if(s[1] > last_7 ||  s[2] > last_7 && s[1] < now){
 						sleep_7.push(diff)
 				}
-				if(s[1] > last_3 ||  s[2] > last_3){
+				if(s[1] > last_3 ||  s[2] > last_3 && s[1] < now){
 						sleep_3.push(diff)
 				}
 				let endTime
@@ -81,11 +91,10 @@
 				}
 
 				place_holder.push({
-						id: s[0],
-						title: s[4] == null?`${prefix} ${timeConversion(s[3] * 1000)}`: s[4],
+						title: s[3] == null|| s[3] === ""?`${prefix} ${timeConversion(s[3] * 1000)}`: s[3],
 						start: s[1],
 						end: endTime,
-						color: s[5] == null? "#687ccc": s[5],
+						color: s[4] == null? "#687ccc": s[4],
 						data:{
 							id: s[0],
 							table: "sleep",
@@ -97,11 +106,11 @@
 			current_sleep = sleep_7_total
 			sleep_30_total = sleep_30.reduce((a, b) => a + b, 0)
 			json.poops.forEach(p => {
-				if(p[1] > last_7) poops_count_7++;
-				if(p[1] > last_30) poops_count_30++;
-				if(p[1] > last_3) poops_count_3++;
+				if(p[1] > last_7 && p[1] < now) poops_count_7++;
+				if(p[1] > last_30 && p[1] < now) poops_count_30++;
+				if(p[1] > last_3 && p[1] < now) poops_count_3++;
 				place_holder.push({
-						title: p[2] == null? "Poopy Diaper": p[2],
+						title: p[2] == null || p[2] === ""? "Poopy Diaper": p[2],
 						start: p[1],
 						color: p[3] == null? "#fcaec0": p[3],
 						data:{
@@ -111,11 +120,11 @@
 				})
 			})
 			json.wet_diaper.forEach(w => {
-				if(w[1] > last_7) wet_diapers_count_7++;
-				if(w[1] > last_30) wet_diapers_count_30++;
-				if(w[1] > last_3) wet_diapers_count_3++;
+				if(w[1] > last_7 && w[1] < now ) wet_diapers_count_7++;
+				if(w[1] > last_30 && w[1] < now) wet_diapers_count_30++;
+				if(w[1] > last_3 && w[1] < now) wet_diapers_count_3++;
 				place_holder.push({
-						title: w[2] == null? "Wet Diaper": w[2],
+						title: w[2] == null|| w[2] === ""? "Wet Diaper": w[2],
 						start: w[1],
 						color: w[3] == null? "#ffbf1c": w[3],
 						data:{
@@ -125,23 +134,27 @@
 				})
 			})
 			cal_events = place_holder
-			current_sleep = sleep_7_total
-			current_poops= poops_count_7
-			current_wet = wet_diapers_count_7
+			current_sleep = sleep_3_total
+			current_poops= poops_count_3
+			current_wet = wet_diapers_count_3
+			console.log(current_sleep, current_wet, current_poops)
 	}
 
 	const actionHandler = (json) => {
+			console.debug("action: ", json.action)
 			switch (json.action) {
 				case 'init':
 						initHandler(json)
 					break;
 				case 'error':
+						// TODO show error message on webpage
 						console.error(json.message)
 					break;
 				case 'console':
 						console.debug(json.message)
 					break;
 				case 'success':
+						// TODO show some kind of success message
 						console.debug(json.message)
 					break;
 				default:
@@ -221,16 +234,8 @@
 		text-align: center;
 		color: white;
 		text-transform: uppercase;
-		font-size: 7em;
+		font-size: 3em;
 		font-weight: 300;
-	}
-
-	h2 {
-		text-align: center;
-		color: white;
-		text-transform: uppercase;
-		font-size: 2em;
-		font-weight: 500;
 	}
 
 	.btn-group  {

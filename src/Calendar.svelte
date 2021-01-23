@@ -3,7 +3,8 @@
   import dayGridPlugin from '@fullcalendar/daygrid';
   import timeGridPlugin from '@fullcalendar/timegrid';
   import { afterUpdate } from 'svelte';
-  import Dialog from './Dialog.svelte'
+  import EditEvent from './EditEvent.svelte'
+  import NewEvent from './NewEvent.svelte'
   import { getContext } from 'svelte';
 
   export let view
@@ -68,15 +69,34 @@
                   buttonText: '3 day'
               }
           },
+          customButtons: {
+            custom1: {
+              text: 'New +',
+              click: function() {
+                  open(
+                      NewEvent,
+                      {
+                          onCancel,
+                          onOkay
+                        },
+                      {
+                          closeButton: false,
+                          closeOnEsc: false,
+                          closeOnOuterClick: true,
+                      }
+                  );
+              },
+            },
+          },
           headerToolbar: {
-            start: 'today', 
+            start: 'today custom1', 
             center: '',
             end: 'prev,next' 
           },
 
           eventClick: function(info) {
             open(
-                Dialog,
+                EditEvent,
                 {
                     info: info.event,
                     onCancel,
