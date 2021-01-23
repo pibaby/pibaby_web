@@ -1,7 +1,8 @@
 <script>
 	import Calendar from './Calendar.svelte'
 	import StatCard from './StatCard.svelte'
-	$: current_view = 7
+	import Modal from './Modal.svelte';
+	$: current_view = 3
 	let poops_count_7 = 0
 	let wet_diapers_count_7 = 0
 	let poops_count_30 = 0
@@ -45,8 +46,6 @@
 			let last_3 = new Date()
 			last_3.setDate(last_3.getDate()  -  3)
 			last_3 = last_3.toISOString()
-
-			console.log(last_7, last_30, last_3)
 			let place_holder = []
 			let sleep_3 = []
 			let sleep_7  = []
@@ -62,36 +61,53 @@
 				if(s[1] > last_3 ||  s[2] > last_3){
 						sleep_3.push(diff)
 				}
-
-				if(diff > 1800000){
-					place_holder.push({
-							title: `Sleep ${timeConversion(s[3] * 1000)}`,
-							start: s[1],
-							end: s[2],
-							color: "#687ccc"
-					})
-				}else{
-					place_holder.push({
-							title: `Sleep ${timeConversion(s[3] * 1000)}`,
-							start: s[1],
-							color: "#687ccc"
-					})
+				let endTime
+				let prefix
+				if(diff > 10888888){
+						prefix = "Sleep"
+						endTime = s[2]
 				}
+				else if(diff > 1800000){
+						prefix = "Nap"
+						endTime = s[2]
+				}
+				else{
+						prefix = "Nap"
+						let date = new Date(s[1])
+						date = new Date(date.getTime() + 30*60000)
+						let isoEndTime = new Date(date.getTime() - 
+							(date.getTimezoneOffset() * 60000)).toISOString(); 
+						endTime = isoEndTime.slice(0, -1)
+				}
+
+				place_holder.push({
+						id: s[0],
+						title: s[4] == null?`${prefix} ${timeConversion(s[3] * 1000)}`: s[4],
+						start: s[1],
+						end: endTime,
+						color: s[5] == null? "#687ccc": s[5],
+						data:{
+							id: s[0],
+							table: "sleep",
+						}
+				})
 			})
 			sleep_3_total = sleep_3.reduce((a, b) => a + b, 0)
 			sleep_7_total = sleep_7.reduce((a, b) => a + b, 0)
 			current_sleep = sleep_7_total
 			sleep_30_total = sleep_30.reduce((a, b) => a + b, 0)
-			console.debug(sleep_3, sleep_7, sleep_30,
-					sleep_3_total,  sleep_7_total, sleep_30_total)
 			json.poops.forEach(p => {
 				if(p[1] > last_7) poops_count_7++;
 				if(p[1] > last_30) poops_count_30++;
 				if(p[1] > last_3) poops_count_3++;
 				place_holder.push({
-						title: "Poop",
+						title: p[2] == null? "Poopy Diaper": p[2],
 						start: p[1],
-						color: "#fcaec0"
+						color: p[3] == null? "#fcaec0": p[3],
+						data:{
+							id: p[0],
+							table: "poops",
+						}
 				})
 			})
 			json.wet_diaper.forEach(w => {
@@ -99,9 +115,13 @@
 				if(w[1] > last_30) wet_diapers_count_30++;
 				if(w[1] > last_3) wet_diapers_count_3++;
 				place_holder.push({
-						title: "Wet",
+						title: w[2] == null? "Wet Diaper": w[2],
 						start: w[1],
-						color: "#ffbf1c"
+						color: w[3] == null? "#ffbf1c": w[3],
+						data:{
+							id: w[0],
+							table: "wet_diaper",
+						}
 				})
 			})
 			cal_events = place_holder
@@ -177,17 +197,19 @@
 
 <main>
 	<h1>Pi Baby</h1>
+	<StatCard days={current_view} 
+						poops={current_poops} wet_diaper={current_wet}
+						sleep={current_sleep}/>
 	<div class="btn-group">
 		<button on:click={() => {statHandler(30)}}>Month</button>
 		<button on:click={() => {statHandler(7)}}>Week</button>
 		<button on:click={() => {statHandler(3)}}>3 Days</button>
 	</div>
-	<StatCard days={current_view} 
-						poops={current_poops} wet_diaper={current_wet}
-						sleep={current_sleep}/>
-	<div class="card">
-		<Calendar view={current_view} events={cal_events}/>
-	</div>
+	<Modal>
+		<div class="card">
+			<Calendar view={current_view} events={cal_events}/>
+		</div>
+	</Modal>
 </main>
 
 <style>

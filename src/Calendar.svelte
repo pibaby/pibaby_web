@@ -3,8 +3,22 @@
   import dayGridPlugin from '@fullcalendar/daygrid';
   import timeGridPlugin from '@fullcalendar/timegrid';
   import { afterUpdate } from 'svelte';
+  import Dialog from './Dialog.svelte'
+  import { getContext } from 'svelte';
+
   export let view
   let initialView = "dayGridWeek"
+  const { open } = getContext('simple-modal');
+
+  const onCancel = (text) => {
+      name = '';
+      status = -1;
+  }
+
+  const onOkay = (text) => {
+      name = text;
+      status = 1;
+  }
 
   export let events = [
       {
@@ -16,22 +30,22 @@
           start: '2018-01-07',
           end: '2018-01-10'
         },
-    ]
+  ]
 
     afterUpdate(() => {
       switch (view) {
         case 7:
-            initialView = "dayGridWeek"
+            initialView = "timeGridWeek"
           break;
         case 30:
             initialView = "dayGridMonth"
           break;
         case 3:
-            initialView = "dayGridThreeDay"
+            initialView = "timeGridThreeDay"
           break;
         
         default:
-            initialView = "dayGridWeek"
+            initialView = "timeGridWeek"
           
       }
       var calendarEl = document.getElementById('calendar');
@@ -46,12 +60,37 @@
           plugins: [ dayGridPlugin, timeGridPlugin ],
           initialDate: new Date(), // today
           timeZone:'local',
+          scrollTime: new Date().toLocaleTimeString(),
           views: {
-              dayGridThreeDay: {
-                  type: 'dayGrid',
+              timeGridThreeDay: {
+                  type: 'timeGrid',
                   duration: { days: 3 },
                   buttonText: '3 day'
               }
+          },
+          headerToolbar: {
+            start: 'today', 
+            center: '',
+            end: 'prev,next' 
+          },
+
+          eventClick: function(info) {
+            open(
+                Dialog,
+                {
+                    info: info.event,
+                    onCancel,
+                    onOkay
+                  },
+                {
+                    closeButton: false,
+                    closeOnEsc: false,
+                    closeOnOuterClick: true,
+                    styleWindow: {
+                      backgroundColor: info.event.backgroundColor,
+                    },
+                }
+            );
           },
           format: "yyyy-MM-dd'T'HH:mm:ssXXX",
           initialView: initialView,
