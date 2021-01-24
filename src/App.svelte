@@ -105,7 +105,7 @@
 				}
 
 				place_holder.push({
-						title: s[3] == null|| s[3] === ""?`${prefix} ${timeConversion(s[3] * 1000)}`: s[3],
+						title: s[3] == null|| s[3] === ""?`${prefix} ${timeConversion(diff)}`: s[3],
 						start: s[1],
 						end: endTime,
 						color: s[4] == null? "#687ccc": s[4],
@@ -209,19 +209,17 @@
 	}
 
 		function timeConversion(millisec) {
+				console.log(millisec)
 			var seconds = (millisec / 1000).toFixed(1);
 			var minutes = (millisec / (1000 * 60)).toFixed(1);
 			var hours = (millisec / (1000 * 60 * 60)).toFixed(1);
-			var days = (millisec / (1000 * 60 * 60 * 24)).toFixed(1);
 			if (seconds < 60) {
 					return seconds + " Sec";
 			} else if (minutes < 60) {
 					return minutes + " Min";
-			} else if (hours < 24) {
-					return hours + " Hrs";
 			} else {
-					return days + " Days"
-			}
+					return hours + " Hrs";
+			} 
 		}
 
 </script>
@@ -298,6 +296,8 @@
 	.btn-group  {
 		display:  flex;
 		justify-content: center;
+		margin-top: 3em;
+		margin-bottom: 3em;
 	}
 
 	.media {
@@ -383,6 +383,9 @@
 		flex-direction: row;
 		justify-content: space-evenly;
 		align-items: center;
+		margin-top: 3em;
+		margin-bottom: 3em;
+
 	}
 
 	.settings img:hover{
