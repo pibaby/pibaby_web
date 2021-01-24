@@ -7,7 +7,8 @@
 	import store from './store.js';
 	import { onMount } from 'svelte';
 	$: current_view = 3
-	let settings = true
+	let settings = false
+	let is_playing = false
 	let setting_data = {}
 	let poops_count_7 = 0
 	let wet_diapers_count_7 = 0
@@ -38,8 +39,13 @@
 		settings = !settings
 	}
 
+	function toggleWhiteNoise(){
+		store.sendMessage(JSON.stringify({action:"toggle_noise", data:is_playing}))
+	}
+
 	const initHandler = (json) => {
 			console.debug(json)
+			is_playing = json.is_playing
 			setting_data = json.settings
 			poops_count_3 = 0	
 			poops_count_7 = 0	
@@ -91,6 +97,7 @@
 				}
 				else{
 						prefix = "Nap"
+						console.log(s[1])
 						let date = new Date(s[1])
 						date = new Date(date.getTime() + 30*60000)
 						let isoEndTime = new Date(date.getTime() - 
@@ -164,6 +171,9 @@
 				case 'success':
 						// TODO show some kind of success message
 						console.debug(json.message)
+				case 'is_playing':
+					  is_playing = json.data
+						console.debug("is_playing", is_playing)
 					break;
 				default:
 						console.error("I do not know this action ", json.action)
@@ -233,6 +243,17 @@
 				<img on:click={() => {settings = !settings}} src="/gear.svg" alt="settings"/>
 			</div>
 			<h1>Pi Baby</h1>
+			{#if is_playing}
+				<div>
+					<div class="media">
+						<img on:click={() => {toggleWhiteNoise()}} alt="white noise stop" src="/stop.svg"/>
+					</div>
+				</div>
+			{:else}
+				<div class="media">
+					<img on:click={() => {toggleWhiteNoise()}}  alt="white noise play" src="/play.svg"/>
+				</div>
+			{/if}
 			<StatCard days={current_view} 
 								poops={current_poops} wet_diaper={current_wet}
 								sleep={current_sleep}/>
@@ -266,6 +287,17 @@
 	.btn-group  {
 		display:  flex;
 		justify-content: center;
+	}
+
+	.media {
+		display: flex;
+		justify-content: center
+	}
+
+	.media img{
+		height: 4em;
+		width: 4em;
+		cursor: pointer;
 	}
 
 	.btn-group button {
