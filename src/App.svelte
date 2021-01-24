@@ -243,6 +243,8 @@
 				<img on:click={() => {settings = !settings}} src="/gear.svg" alt="settings"/>
 			</div>
 			<h1>Pi Baby</h1>
+			<div class="rows">
+				<h2>White Noise:</h2>
 			{#if is_playing}
 				<div>
 					<div class="media">
@@ -254,6 +256,8 @@
 					<img on:click={() => {toggleWhiteNoise()}}  alt="white noise play" src="/play.svg"/>
 				</div>
 			{/if}
+				
+			</div>
 			<StatCard days={current_view} 
 								poops={current_poops} wet_diaper={current_wet}
 								sleep={current_sleep}/>
@@ -280,8 +284,15 @@
 		text-align: center;
 		color: white;
 		text-transform: uppercase;
-		font-size: 3em;
+		font-size: 5em;
 		font-weight: 300;
+	}
+
+	h2 {
+		text-align: center;
+		font-size: 2em;
+		font-weight: 500;
+		color: #72aba1
 	}
 
 	.btn-group  {
@@ -365,6 +376,13 @@
 		justify-content: flex-start;
 		padding-left: 10px;
 		padding-top: 10px;
+	}
+
+	.rows{
+		display: flex;
+		flex-direction: row;
+		justify-content: space-evenly;
+		align-items: center;
 	}
 
 	.settings img:hover{
