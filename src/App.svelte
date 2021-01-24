@@ -1,12 +1,14 @@
 <script>
 	import Calendar from './Calendar.svelte'
 	import StatCard from './StatCard.svelte'
+	import Settings from './Settings.svelte'
   import { fly } from 'svelte/transition';
 	import Modal from './Modal.svelte';
 	import store from './store.js';
 	import { onMount } from 'svelte';
 	$: current_view = 3
-	let settings = false
+	let settings = true
+	let setting_data = {}
 	let poops_count_7 = 0
 	let wet_diapers_count_7 = 0
 	let poops_count_30 = 0
@@ -32,9 +34,13 @@
 		})
 	})
 
+	function toggleSettings(){
+		settings = !settings
+	}
 
 	const initHandler = (json) => {
 			console.debug(json)
+			setting_data = json.settings
 			poops_count_3 = 0	
 			poops_count_7 = 0	
 			poops_count_30 = 0	
@@ -215,9 +221,10 @@
 		<div in:fly="{{ y: -50, duration: 250, delay: 300 }}"
     out:fly="{{ y: -50, duration: 250 }}" >
 			<div class="settings back">
-				<img on:click={() => {settings = !settings}} src="/back.svg" alt="settings"/>
+				<img on:click={toggleSettings} src="/back.svg" alt="settings"/>
 			</div>
 			<h1>Settings</h1>
+			<Settings toggle={toggleSettings} settings={setting_data}/>
 		</div>
 	{:else}
 		<div in:fly="{{ y: -50, duration: 250, delay: 300 }}"
