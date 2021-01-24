@@ -97,7 +97,6 @@
 				}
 				else{
 						prefix = "Nap"
-						console.log(s[1])
 						let date = new Date(s[1])
 						date = new Date(date.getTime() + 30*60000)
 						let isoEndTime = new Date(date.getTime() - 
@@ -171,6 +170,7 @@
 				case 'success':
 						// TODO show some kind of success message
 						console.debug(json.message)
+					break;
 				case 'is_playing':
 					  is_playing = json.data
 						console.debug("is_playing", is_playing)

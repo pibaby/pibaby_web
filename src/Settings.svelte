@@ -9,6 +9,7 @@
 				action:"settings",
 				settings:settings
 		}))
+		toggle()
 	}
 </script>
 
