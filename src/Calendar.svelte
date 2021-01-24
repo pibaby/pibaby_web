@@ -61,7 +61,7 @@
           plugins: [ dayGridPlugin, timeGridPlugin ],
           initialDate: new Date(), // today
           timeZone:'local',
-          scrollTime: new Date().toLocaleTimeString(),
+          scrollTime: new Date().toTimeInputValue(),
           views: {
               timeGridThreeDay: {
                   type: 'timeGrid',

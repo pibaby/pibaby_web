@@ -2,11 +2,6 @@
   import { getContext } from 'svelte';
 	import store from './store.js'
 	export let onCancel = () => {};
-	Date.prototype.toDateInputValue = (function(add = 0 ) {
-    var local = new Date(this);
-    local.setMinutes((this.getMinutes() - this.getTimezoneOffset()) + add);
-    return local.toJSON().slice(0,-1);
-	});
 	let tables = ["sleep","wet_diaper","poops"]
 	let colors = ["#687ccc","#ffbf1c","#fcaec0"] 
 	let selection = 0

@@ -5,6 +5,7 @@
 	import store from './store.js';
 	import { onMount } from 'svelte';
 	$: current_view = 3
+	let settings = false
 	let poops_count_7 = 0
 	let wet_diapers_count_7 = 0
 	let poops_count_30 = 0
@@ -209,20 +210,30 @@
 </script>
 
 <main>
-	<h1>Pi Baby</h1>
-	<StatCard days={current_view} 
-						poops={current_poops} wet_diaper={current_wet}
-						sleep={current_sleep}/>
-	<div class="btn-group">
-		<button on:click={() => {statHandler(30)}}>Month</button>
-		<button on:click={() => {statHandler(7)}}>Week</button>
-		<button on:click={() => {statHandler(3)}}>3 Days</button>
-	</div>
-	<Modal>
-		<div class="card">
-			<Calendar view={current_view} events={cal_events}/>
+	{#if settings}
+		<div class="settings back">
+			<img on:click={() => {settings = !settings}} src="/back.svg" alt="settings"/>
 		</div>
-	</Modal>
+		<h1>Settings</h1>
+	{:else}
+		<div class="settings">
+			<img on:click={() => {settings = !settings}} src="/gear.svg" alt="settings"/>
+		</div>
+		<h1>Pi Baby</h1>
+		<StatCard days={current_view} 
+							poops={current_poops} wet_diaper={current_wet}
+							sleep={current_sleep}/>
+		<div class="btn-group">
+			<button on:click={() => {statHandler(30)}}>Month</button>
+			<button on:click={() => {statHandler(7)}}>Week</button>
+			<button on:click={() => {statHandler(3)}}>3 Days</button>
+		</div>
+		<Modal>
+			<div class="card">
+				<Calendar view={current_view} events={cal_events}/>
+			</div>
+		</Modal>
+	{/if}
 </main>
 
 <style>
@@ -290,6 +301,29 @@
 		padding: 20px;
 		margin: 10px;
 		border-radius: 20px;
+	}
+
+	.settings img{
+		width: 2em;
+		border-radius: 50%;
+	}
+
+	.settings {
+		display: flex;
+		justify-content: flex-end;
+		padding-right: 10px;
+		padding-top: 10px;
+	}
+
+	.back{
+		justify-content: flex-start;
+		padding-left: 10px;
+		padding-top: 10px;
+	}
+
+	.settings img:hover{
+		background-color: #afc9c5;
+		cursor: pointer;
 	}
 
 </style>
