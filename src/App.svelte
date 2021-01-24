@@ -1,6 +1,7 @@
 <script>
 	import Calendar from './Calendar.svelte'
 	import StatCard from './StatCard.svelte'
+  import { fly } from 'svelte/transition';
 	import Modal from './Modal.svelte';
 	import store from './store.js';
 	import { onMount } from 'svelte';
@@ -211,28 +212,34 @@
 
 <main>
 	{#if settings}
-		<div class="settings back">
-			<img on:click={() => {settings = !settings}} src="/back.svg" alt="settings"/>
-		</div>
-		<h1>Settings</h1>
-	{:else}
-		<div class="settings">
-			<img on:click={() => {settings = !settings}} src="/gear.svg" alt="settings"/>
-		</div>
-		<h1>Pi Baby</h1>
-		<StatCard days={current_view} 
-							poops={current_poops} wet_diaper={current_wet}
-							sleep={current_sleep}/>
-		<div class="btn-group">
-			<button on:click={() => {statHandler(30)}}>Month</button>
-			<button on:click={() => {statHandler(7)}}>Week</button>
-			<button on:click={() => {statHandler(3)}}>3 Days</button>
-		</div>
-		<Modal>
-			<div class="card">
-				<Calendar view={current_view} events={cal_events}/>
+		<div in:fly="{{ y: -50, duration: 250, delay: 300 }}"
+    out:fly="{{ y: -50, duration: 250 }}" >
+			<div class="settings back">
+				<img on:click={() => {settings = !settings}} src="/back.svg" alt="settings"/>
 			</div>
-		</Modal>
+			<h1>Settings</h1>
+		</div>
+	{:else}
+		<div in:fly="{{ y: -50, duration: 250, delay: 300 }}"
+    out:fly="{{ y: -50, duration: 250 }}" >
+			<div class="settings">
+				<img on:click={() => {settings = !settings}} src="/gear.svg" alt="settings"/>
+			</div>
+			<h1>Pi Baby</h1>
+			<StatCard days={current_view} 
+								poops={current_poops} wet_diaper={current_wet}
+								sleep={current_sleep}/>
+			<div class="btn-group">
+				<button on:click={() => {statHandler(30)}}>Month</button>
+				<button on:click={() => {statHandler(7)}}>Week</button>
+				<button on:click={() => {statHandler(3)}}>3 Days</button>
+			</div>
+			<Modal>
+				<div class="card">
+					<Calendar view={current_view} events={cal_events}/>
+				</div>
+			</Modal>
+		</div>
 	{/if}
 </main>
 
