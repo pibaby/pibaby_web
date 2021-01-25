@@ -23,6 +23,7 @@
 	let sleep_3_total = 0
 	let sleep_7_total = 0
 	let sleep_30_total = 0
+		let status = ""
 	
 	onMount(() => {
 		store.subscribe(received_msg => {
@@ -161,14 +162,53 @@
 						initHandler(json)
 					break;
 				case 'error':
-						// TODO show error message on webpage
+						status =`
+ <div id="alert" class="alert" style="
+		position: fixed;
+		bottom: 5px;
+		left: 2%;
+	  width: 96%;
+	  background-color: #eb596e;
+	  color: white;
+	  z-index: 999;
+ 		border-radius: 5px;
+		padding 10px;
+ 		opacity: 0.7;
+ 		text-align: center;
+		transition: opacity .25s ease-in-out;
+ " onclick="this.style.opacity=0">
+ <p>${json.message}</p>
+	</div>
+			` 
+						setTimeout(() => {
+								status = ""
+						}, 3000)
 						console.error(json.message)
 					break;
 				case 'console':
 						console.debug(json.message)
 					break;
 				case 'success':
-						// TODO show some kind of success message
+						status =`
+ <div id="alert" class="alert" style="
+		position: fixed;
+		bottom: 5px;
+		left: 2%;
+	  width: 96%;
+	  background-color: #16c79a;
+	  color: white;
+	  z-index: 999;
+ 		border-radius: 5px;
+		padding 10px;
+ 		text-align: center;
+		transition: opacity .25s ease-in-out;
+ " onclick="this.style.opacity=0">
+ <img src="/check.svg" style="width: 2em; padding: 3px;"/>
+	</div>
+			` 
+						setTimeout(() => {
+								status = ""
+						}, 3000)
 						console.debug(json.message)
 					break;
 				case 'is_playing':
@@ -225,6 +265,7 @@
 </script>
 
 <main>
+	{@html status}
 	{#if settings}
 		<div in:fly="{{ y: -50, duration: 250, delay: 300 }}"
     out:fly="{{ y: -50, duration: 250 }}" >
